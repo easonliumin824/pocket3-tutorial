@@ -1,0 +1,126 @@
+{
+  "skill": "check",
+  "generated_at": "2026-09-24T16:30:00+08:00",
+  "project_name": "Pocket 3 新手拍摄教程",
+  "target": "flow-mobile (4 flows, 15 screens, 9 files)",
+  "findings": [
+    {
+      "category": "components",
+      "severity": "major",
+      "description": "约 34 处硬编码十六进制色值（如 #f0f7ff、#f0fff4、#fff2f0、#fffbe6、#ad6800、#69b4ff、#b7eb8f、#f5f7fa 等），未使用 antd-mobile CSS 变量（var(--adm-color-*)）。与项目已声明的设计规范不一致，且不利于主题切换和深色模式适配。",
+      "suggestion": "将所有硬编码色值替换为 antd-mobile CSS 变量。例如：#f0f7ff → var(--adm-color-primary) 的浅色背景变体；#f0fff4 → var(--adm-color-success) 的浅色背景；#fff2f0 → var(--adm-color-danger) 的浅色背景。建议在 src/styles/ 下定义 --color-success-bg、--color-warning-bg 等语义化变量统一管理。",
+      "location": "src/flows/flow-1/flow1-quick-setup.tsx (lines 28, 161, 327-328, 367); src/flows/flow-2/flow2-scene-guide.tsx (多处); src/flows/flow-3/flow3-checklist.tsx (lines 80, 149, 415, 425, 474, 280); src/flows/flow-4/flow4-advanced-tips.tsx (lines 78, 301, 338, 482, 429, 439, 498, 501)"
+    },
+    {
+      "category": "edge-states",
+      "severity": "major",
+      "description": "所有 15 个屏幕均无加载态（skeleton / spinner）设计。虽然当前数据来自本地 mock-data，但架构上应预留异步数据加载的 UI 状态，尤其是场景数据、技巧列表等未来可能来自网络的内容。",
+      "suggestion": "为 Screen1 级别的数据列表页（Screen1_TipsList、Screen1_ChecklistOverview、Screen1_ParamsOverview）添加 loading 状态判断，使用 antd-mobile 的 Skeleton 或 SpinLoading 组件。即便当前用 mock 数据，也应在组件内预留 isLoading 状态。",
+      "location": "所有 Screen1_* 组件（flow1-4）"
+    },
+    {
+      "category": "edge-states",
+      "severity": "major",
+      "description": "无全局错误边界（Error Boundary）。任何组件的渲染错误会导致整个应用白屏，无友好提示和恢复路径。",
+      "suggestion": "在 App.tsx 或 AppShell 层添加 React Error Boundary，捕获渲染错误后展示 antd-mobile 的 ErrorBlock 组件 + "重新加载" 按钮。",
+      "location": "src/App.tsx 或 src/flows/pocket3-tutorial/AppShell.tsx"
+    },
+    {
+      "category": "brief-consistency",
+      "severity": "major",
+      "description": "约束条件要求"需离线可用"，但当前实现未做任何离线支持（无 Service Worker、无资源缓存策略）。虽然单文件 HTML 无后端，但 Vite 构建的 SPA 在离线环境下需要 SW 才能工作。",
+      "suggestion": "添加 Vite PWA 插件（vite-plugin-pwa）配置，生成 Service Worker 实现离线缓存。或在构建配置中启用 workbox 的 generateSW 模式，缓存所有静态资源。",
+      "location": "vite.config.ts（缺失）"
+    },
+    {
+      "category": "brief-consistency",
+      "severity": "major",
+      "description": "设计标准要求"户外强光下文字清晰可读"，但大量文字使用 opacity: 0.4~0.7 降低对比度（如 flow1 line 43 opacity:0.6、flow2 line 193 opacity:0.7、Settings.tsx 多处 opacity:0.6）。在户外强光下，低对比度文字几乎不可读。",
+      "suggestion": "将辅助文字的最低 opacity 提升到 0.7（正文）和 0.6（标签/说明），避免使用 opacity < 0.5 的文字。对于次要信息，改用 font-size 缩小或 color 使用 var(--adm-color-text-secondary) 而非透明度叠加。",
+      "location": "全项目，尤其是 flow1-quick-setup.tsx、flow2-scene-guide.tsx、Settings.tsx 中的 description 文字"
+    },
+    {
+      "category": "visual-hierarchy",
+      "severity": "minor",
+      "description": "flow1 使用了 12+ 种不同字号（11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 28, 32, 56），字号层级过多，视觉节奏不统一。",
+      "suggestion": "收敛到 5-6 个标准字号档位，如：caption(12) / body-sm(13) / body(15) / title-sm(17) / title(20) / display(24)。其余字号就近归入最近档位。",
+      "location": "src/flows/flow-1/flow1-quick-setup.tsx"
+    },
+    {
+      "category": "visual-hierarchy",
+      "severity": "minor",
+      "description": "flow2 存在非 4px 倍数的间距值：padding '10px 16px'（line 442）、padding '6px 0'（line 699）、padding '2px 0'（line 732）。项目规范要求间距使用 4px 倍数。",
+      "suggestion": "将 10px → 12px（3×4），6px → 8px（2×4），2px → 4px（1×4）。",
+      "location": "src/flows/flow-2/flow2-scene-guide.tsx (lines 442, 699, 732)"
+    },
+    {
+      "category": "ia",
+      "severity": "minor",
+      "description": "flow3 Screen1_ChecklistOverview 的 NavBar 未设置 onBack 回调，用户无法通过顶部导航返回上一页。作为 TabBar 入口页，虽然可以从 Tab 切换离开，但缺少 NavBar 返回键的降级路径。",
+      "suggestion": "添加 onBack={() => navigate('/')} 回到首页，或如果该页面是 Tab 根页面则不显示返回按钮（传 backIcon={null} 或不传 onBack）。",
+      "location": "src/flows/flow-3/flow3-checklist.tsx (Screen1_ChecklistOverview, line 74)"
+    },
+    {
+      "category": "ia",
+      "severity": "minor",
+      "description": "flow3 Screen2_ItemDetail 和 flow4 Screen2_TipDetail 使用 window.location.pathname 手动解析路由参数，而非 react-router-dom 的 useParams。这违反了 SPA 路由最佳实践，且在路由嵌套或 basename 配置时可能解析错误。",
+      "suggestion": "在路由定义中使用 :id 参数（如 /checklist/item/:id），在组件内用 const { itemId } = useParams() 获取。",
+      "location": "src/flows/flow-3/flow3-checklist.tsx (line 234); src/flows/flow-4/flow4-advanced-tips.tsx (line 184)"
+    },
+    {
+      "category": "accessibility",
+      "severity": "minor",
+      "description": "部分文字使用 opacity: 0.4~0.5 叠加在浅色背景上，实际对比度可能低于 WCAG AA 要求的 4.5:1。例如 opacity:0.4 的 var(--adm-color-text) 在白色背景上对比度约 2.5:1。",
+      "suggestion": "确保所有正文文字对比度 ≥ 4.5:1。将最低 opacity 设为 0.55 以上，或直接使用满足对比度要求的固定色值。可用 Chrome DevTools 的 contrast checker 验证。",
+      "location": "全项目中 opacity < 0.5 的文字元素"
+    },
+    {
+      "category": "accessibility",
+      "severity": "minor",
+      "description": "部分信息仅通过颜色传达，缺少辅助标识。例如 flow3 清单项的状态指示（✓ / ○ / ⚠）虽然有符号辅助，但 flow4 难度标签仅用颜色区分（绿/黄/红），色盲用户可能无法区分。",
+      "suggestion": "难度标签已有文字（"入门"/"进阶"/"高级"），这点已符合。但建议检查其他仅靠颜色传达信息的场景，确保都有文字或图标辅助。当前已基本合规。",
+      "location": "src/flows/flow-4/flow4-advanced-tips.tsx (difficultyMap)"
+    },
+    {
+      "category": "feedback",
+      "severity": "minor",
+      "description": "首页场景卡片点击后直接 navigate 跳转，无任何过渡反馈。在网络较慢或页面较重的情况下，用户可能感知不到点击已生效。",
+      "suggestion": "添加点击态视觉反馈：使用 CSS :active 伪类降低透明度，或在 navigate 前调用 Toast.show 做轻量确认。antd-mobile 的 List.Item 自带点击态，但自定义 div 卡片需要手动添加。",
+      "location": "src/flows/shared/Home.tsx (场景卡片 onClick)"
+    },
+    {
+      "category": "feedback",
+      "severity": "minor",
+      "description": "设置页的开关（深色模式、大字体、练习提醒）切换后仅显示 Toast 提示，但实际功能未生效（useState 仅存储状态，未连接到实际的主题切换或字体缩放逻辑）。",
+      "suggestion": "如果当前是原型阶段，可在 Toast 文案中注明"演示模式，暂未接入"。或在后续迭代中实际接入 CSS 变量切换逻辑（document.documentElement.setAttribute('data-theme', ...)）。",
+      "location": "src/flows/shared/Settings.tsx (darkMode / largeText / notifications 的 Switch onChange)"
+    },
+    {
+      "category": "responsive",
+      "severity": "minor",
+      "description": "未定义明确的响应式断点行为。虽然项目定位为移动端 H5，但未考虑 iPhone SE（320px）等小屏设备下的布局适配，也未处理横屏场景。",
+      "suggestion": "在关键布局处添加 min-width 约束或使用 clamp() 做弹性尺寸。至少在 CSS 中添加 @media (max-width: 320px) 的降级规则，确保小屏不溢出。",
+      "location": "全项目布局文件"
+    },
+    {
+      "category": "flow-continuity",
+      "severity": "minor",
+      "description": "flow2 有 5 个屏幕，Screen5_ReferenceCard 作为参考卡片页，其返回路径和下一步路径在代码注释中有定义，但实际跳转逻辑依赖 navigate(-1)，缺少明确的"下一步"引导。",
+      "suggestion": "在 Screen5 底部添加明确的导航按钮（如"返回场景参数"或"查看其他场景"），避免用户只能通过系统返回键退出。",
+      "location": "src/flows/flow-2/flow2-scene-guide.tsx (Screen5_ReferenceCard)"
+    },
+    {
+      "category": "components",
+      "severity": "minor",
+      "description": "flow1 Screen3_BasicSetup 和 Screen4_SelectScene 的根 div 缺少 width: '100%'，可能导致在某些渲染条件下内容区域宽度不一致。",
+      "suggestion": "为所有屏幕根 div 统一添加 width: '100%'，与 Phase D 中 P1-4 修复保持一致。",
+      "location": "src/flows/flow-1/flow1-quick-setup.tsx (Screen3 line 229, Screen4 需确认)"
+    }
+  ],
+  "summary": {
+    "blocker": 0,
+    "major": 5,
+    "minor": 11,
+    "pass": 1
+  }
+}

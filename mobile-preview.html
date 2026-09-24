@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pocket 3 新手教程 — Mobile Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    color: #fff;
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+  .preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .phone-frame {
+    width: 320px;
+    flex-shrink: 0;
+  }
+  .phone-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .phone-label span {
+    background: rgba(255,255,255,0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+  .phone {
+    width: 320px;
+    height: 640px;
+    background: #fff;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.1);
+    position: relative;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 24px;
+    background: #1a1a2e;
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #fff;
+    font-size: 14px;
+    color: #333;
+    scrollbar-width: none;
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  /* ── Screen Styles ── */
+  .safe-top { height: 36px; }
+  .safe-bottom { height: 20px; }
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 0.5px solid #eee;
+    position: relative;
+    background: #fff;
+  }
+  .nav-bar .back {
+    position: absolute;
+    left: 12px;
+    color: #1677ff;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .screen-content {
+    padding: 16px;
+  }
+
+  /* Home */
+  .home-title { font-size: 22px; font-weight: 700; color: #333; margin-bottom: 6px; }
+  .home-desc { font-size: 13px; color: #999; line-height: 1.6; margin-bottom: 20px; }
+  .scene-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+  .scene-thumb {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: #f5f5f5; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .scene-info { flex: 1; }
+  .scene-name { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 2px; }
+  .scene-desc { font-size: 12px; color: #999; line-height: 1.4; }
+  .scene-arrow { color: #ccc; font-size: 16px; }
+  .quick-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .quick-btn {
+    height: 48px; border-radius: 12px; border: 1px solid #1677ff;
+    color: #1677ff; font-size: 14px; display: flex; align-items: center; justify-content: center;
+    background: #fff; font-weight: 500;
+  }
+
+  /* TabBar */
+  .tab-bar {
+    display: flex;
+    border-top: 1px solid #eee;
+    background: #fff;
+    padding-bottom: 4px;
+  }
+  .tab-item {
+    flex: 1; text-align: center; padding: 6px 0 4px;
+    font-size: 10px; color: #999;
+  }
+  .tab-item.active { color: #1677ff; }
+  .tab-icon { font-size: 20px; margin-bottom: 2px; }
+
+  /* Params Screen */
+  .param-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px; border-radius: 12px;
+    background: #f5f5f5; margin-bottom: 16px;
+  }
+  .param-thumb {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .param-title { font-size: 17px; font-weight: 600; color: #333; }
+  .param-subtitle { font-size: 12px; color: #999; margin-top: 2px; }
+  .param-group { margin-bottom: 14px; }
+  .param-group-title {
+    font-size: 13px; font-weight: 600; color: #666;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+  }
+  .param-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; border-radius: 8px;
+    background: #f8f9fa; margin-bottom: 4px;
+  }
+  .param-label { font-size: 13px; color: #666; }
+  .param-value { font-size: 13px; font-weight: 600; color: #333; }
+  .param-highlight {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    background: rgba(22,119,255,0.06); color: #1677ff; font-weight: 600; font-size: 12px;
+  }
+  .cta-btn {
+    width: 100%; height: 48px; border-radius: 12px;
+    background: #1677ff; color: #fff; font-size: 15px; font-weight: 600;
+    border: none; display: flex; align-items: center; justify-content: center;
+    margin-top: 16px;
+  }
+
+  /* Checklist */
+  .progress-bar {
+    height: 6px; border-radius: 3px; background: #f0f0f0; margin-bottom: 6px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 3px; background: #1677ff; width: 0%;
+  }
+  .progress-text { font-size: 12px; color: #999; margin-bottom: 16px; }
+  .check-group { margin-bottom: 12px; }
+  .check-group-header {
+    font-size: 14px; font-weight: 600; color: #333;
+    padding: 10px 12px; background: #f8f9fa; border-radius: 10px 10px 0 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .check-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px; border: 1px solid #eee; border-top: none;
+    background: #fff;
+  }
+  .check-item:first-of-type { border-radius: 0 0 10px 10px; }
+  .check-circle {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #ddd; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0;
+  }
+  .check-circle.checked { background: rgba(77,171,154,0.08); border-color: #4dab9a; color: #4dab9a; }
+  .check-label { font-size: 14px; color: #333; }
+  .check-required { font-size: 11px; color: #ff4d4f; margin-left: 4px; }
+
+  /* Tips */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; }
+  .filter-chip {
+    padding: 6px 14px; border-radius: 16px; font-size: 13px;
+    background: #f5f5f5; color: #666; white-space: nowrap; border: none;
+  }
+  .filter-chip.active { background: #1677ff; color: #fff; }
+  .tip-card {
+    padding: 14px; border-radius: 12px; border: 1px solid #eee;
+    margin-bottom: 10px; background: #fff;
+  }
+  .tip-title { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 4px; }
+  .tip-desc { font-size: 12px; color: #999; line-height: 1.5; margin-bottom: 8px; }
+  .tip-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tip-tag {
+    padding: 2px 8px; border-radius: 4px; font-size: 11px;
+  }
+  .tag-beginner { background: rgba(77,171,154,0.1); color: #4dab9a; }
+  .tag-intermediate { background: rgba(255,184,0,0.1); color: #ad6800; }
+
+  /* Onboarding */
+  .onboard-content {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 480px; padding: 24px; text-align: center;
+  }
+  .onboard-icon { font-size: 64px; margin-bottom: 24px; }
+  .onboard-title { font-size: 22px; font-weight: 700; color: #333; margin-bottom: 12px; }
+  .onboard-desc { font-size: 14px; color: #999; line-height: 1.7; margin-bottom: 32px; }
+  .onboard-btn {
+    width: 100%; height: 48px; border-radius: 12px;
+    background: #1677ff; color: #fff; font-size: 15px; font-weight: 600;
+    border: none;
+  }
+  .onboard-skip {
+    margin-top: 12px; font-size: 13px; color: #999; background: none; border: none;
+  }
+
+  /* Steps */
+  .step-item {
+    display: flex; gap: 12px; margin-bottom: 16px;
+  }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #1677ff; color: #fff; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px; }
+  .step-desc { font-size: 12px; color: #999; line-height: 1.6; }
+
+  /* Comparison */
+  .compare-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px; border-radius: 10px; margin-bottom: 8px;
+  }
+  .compare-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .compare-icon.good { background: rgba(77,171,154,0.08); }
+  .compare-icon.bad { background: rgba(255,77,79,0.06); }
+  .compare-text { font-size: 13px; color: #333; }
+
+  /* Tip detail */
+  .tip-detail-header {
+    padding: 16px; border-radius: 12px;
+    background: rgba(77,171,154,0.08); margin-bottom: 16px;
+  }
+  .tip-detail-title { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 4px; }
+  .tip-detail-difficulty { font-size: 12px; color: #4dab9a; }
+  .tip-detail-desc { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 20px; }
+
+  /* Completion */
+  .completion-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(77,171,154,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin: 0 auto 20px;
+  }
+  .completion-title { font-size: 20px; font-weight: 700; color: #333; text-align: center; margin-bottom: 8px; }
+  .completion-desc { font-size: 14px; color: #999; text-align: center; line-height: 1.6; margin-bottom: 24px; }
+  .stat-row {
+    display: flex; justify-content: center; gap: 32px; margin-bottom: 24px;
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 700; color: #1677ff; }
+  .stat-label { font-size: 12px; color: #999; margin-top: 4px; }
+
+  /* Section title */
+  .section-title {
+    font-size: 13px; color: #999; margin-bottom: 8px; font-weight: 500;
+  }
+  .warning-box {
+    padding: 12px; border-radius: 8px;
+    background: rgba(255,184,0,0.08); border-left: 3px solid #ffb800;
+    margin: 12px 0; font-size: 12px; color: #ad6800; line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<h1>Pocket 3 新手拍摄教程</h1>
+<p class="subtitle">Mobile H5 Preview — 15 screens across 4 flows</p>
+
+<div class="preview-grid">
+
+  <!-- ═══════════════════════════════════════
+       Flow 1: Onboarding — Screen 1
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 1 · Screen 1 — 欢迎页</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="onboard-content">
+          <div class="onboard-icon">📷</div>
+          <div class="onboard-title">欢迎使用 Pocket 3</div>
+          <div class="onboard-desc">
+            新手拍摄教程将带你快速掌握<br>
+            DJI Pocket 3 的核心拍摄技巧<br><br>
+            从参数设置到实拍指导，<br>
+            让你轻松拍出专业级画面
+          </div>
+          <button class="onboard-btn">开始设置</button>
+          <button class="onboard-skip">稍后再说</button>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 1: Onboarding — Screen 4
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 1 · Screen 4 — 选择场景</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="nav-bar"><span class="back">‹ 返回</span>选择拍摄场景</div>
+        <div class="screen-content">
+          <div class="home-desc" style="margin-bottom:16px">选择你最常拍的场景，我们将为你定制参数建议</div>
+          <div class="scene-card">
+            <div class="scene-thumb">🧑</div>
+            <div class="scene-info"><div class="scene-name">户外人像</div><div class="scene-desc">阳光下的人像拍摄</div></div>
+            <div class="scene-arrow">›</div>
+          </div>
+          <div class="scene-card">
+            <div class="scene-thumb">️</div>
+            <div class="scene-info"><div class="scene-name">风光</div><div class="scene-desc">壮阔风景拍摄</div></div>
+            <div class="scene-arrow">›</div>
+          </div>
+          <div class="scene-card">
+            <div class="scene-thumb">🏠</div>
+            <div class="scene-info"><div class="scene-name">室内生活</div><div class="scene-desc">室内日常记录</div></div>
+            <div class="scene-arrow">›</div>
+          </div>
+          <button class="cta-btn">进入拍摄指导</button>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 2: Scene Guide — Screen 1
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 2 · Screen 1 — 参数总览</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="nav-bar"><span class="back">‹ 返回</span>户外人像拍摄参数</div>
+        <div class="screen-content">
+          <div class="param-header">
+            <div class="param-thumb">🧑</div>
+            <div><div class="param-title">户外人像</div><div class="param-subtitle">阳光下的人像拍摄，注意曝光与肤色还原</div></div>
+          </div>
+
+          <div class="param-group">
+            <div class="param-group-title">🎬 画质设置</div>
+            <div class="param-row"><span class="param-label">分辨率</span><span class="param-value">4K</span></div>
+            <div class="param-row"><span class="param-label">帧率</span><span class="param-value">30fps</span></div>
+            <div class="param-row"><span class="param-label">视野</span><span class="param-value">广角（1x）</span></div>
+          </div>
+
+          <div class="param-group">
+            <div class="param-group-title">️ 曝光与色彩</div>
+            <div class="param-row"><span class="param-label">曝光补偿</span><span class="param-value param-highlight">+0.3</span></div>
+            <div class="param-row"><span class="param-label">ISO</span><span class="param-value">100-400</span></div>
+            <div class="param-row"><span class="param-label">白平衡</span><span class="param-value">日光 5600K</span></div>
+          </div>
+
+          <div class="param-group">
+            <div class="param-group-title">🎯 云台设置</div>
+            <div class="param-row"><span class="param-label">云台模式</span><span class="param-value">Follow 跟随</span></div>
+          </div>
+
+          <button class="cta-btn">开始拍摄指导</button>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 2: Scene Guide — Screen 2
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 2 · Screen 2 — 步骤指导</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="nav-bar"><span class="back">‹ 返回</span>拍摄步骤</div>
+        <div class="screen-content">
+          <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+          <div class="progress-text">步骤 3 / 6</div>
+
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content"><div class="step-title">开机并解锁云台</div><div class="step-desc">长按电源键 2 秒，等待云台自检完成</div></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content"><div class="step-title">选择视频模式</div><div class="step-desc">滑动切换到「视频」模式</div></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num" style="background:#1677ff;box-shadow:0 0 0 4px rgba(22,119,255,0.15)">3</div>
+            <div class="step-content">
+              <div class="step-title">设置分辨率与帧率</div>
+              <div class="step-desc">选择 4K；帧率选 30fps。4K/30fps 是人像拍摄的最佳平衡点</div>
+              <div style="margin-top:6px"><span class="param-highlight">分辨率：4K / 30fps</span></div>
+            </div>
+          </div>
+          <div class="step-item" style="opacity:0.5">
+            <div class="step-num" style="background:#ddd">4</div>
+            <div class="step-content"><div class="step-title">调整曝光补偿</div><div class="step-desc">设为 +0.3，让肤色更通透</div></div>
+          </div>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 2: Scene Guide — Screen 3
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 2 · Screen 3 — 示例对比</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="nav-bar"><span class="back">‹ 返回</span>效果对比</div>
+        <div class="screen-content">
+          <div class="section-title">正确设置 vs 常见错误</div>
+
+          <div class="compare-row" style="background:rgba(77,171,154,0.04)">
+            <div class="compare-icon good">✓</div>
+            <div class="compare-text"><b>曝光 +0.3</b> — 肤色通透自然，高光不过曝</div>
+          </div>
+          <div class="compare-row" style="background:rgba(255,77,79,0.03)">
+            <div class="compare-icon bad">✗</div>
+            <div class="compare-text"><b>曝光 0（默认）</b> — 肤色偏暗，缺乏通透感</div>
+          </div>
+
+          <div style="height:16px"></div>
+          <div class="section-title">白平衡对比</div>
+
+          <div class="compare-row" style="background:rgba(77,171,154,0.04)">
+            <div class="compare-icon good">✓</div>
+            <div class="compare-text"><b>日光 5600K</b> — 色彩准确，肤色自然</div>
+          </div>
+          <div class="compare-row" style="background:rgba(255,77,79,0.03)">
+            <div class="compare-icon bad">✗</div>
+            <div class="compare-text"><b>自动白平衡</b> — 肤色可能忽冷忽暖</div>
+          </div>
+
+          <div class="warning-box">
+            ⚠ 户外拍摄建议固定白平衡，避免自动模式下肤色不稳定
+          </div>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 3: Checklist — Screen 1
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 3 · Screen 1 — 检查清单</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="nav-bar">拍前检查清单</div>
+        <div class="screen-content">
+          <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+          <div class="progress-text">必选项 0/5 已完成</div>
+
+          <div class="check-group">
+            <div class="check-group-header">🔋 电源</div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <div><span class="check-label">电量充足</span><span class="check-required">必选</span></div>
+            </div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <div><span class="check-label">备用电池</span></div>
+            </div>
+          </div>
+
+          <div class="check-group">
+            <div class="check-group-header">💾 存储</div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <div><span class="check-label">SD 卡已插入</span><span class="check-required">必选</span></div>
+            </div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <div><span class="check-label">存储空间充足</span><span class="check-required">必选</span></div>
+            </div>
+          </div>
+
+          <div class="check-group">
+            <div class="check-group-header"> 云台</div>
+            <div class="check-item">
+              <div class="check-circle"></div>
+              <div><span class="check-label">云台已解锁</span><span class="check-required">必选</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab-item"><div class="tab-icon">🏠</div>首页</div>
+          <div class="tab-item active"><div class="tab-icon">✅</div>清单</div>
+          <div class="tab-item"><div class="tab-icon">🧭</div>进阶</div>
+          <div class="tab-item"><div class="tab-icon">⚙️</div>设置</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 3: Checklist — Screen 3 (Complete)
+       ══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 3 · Screen 3 — 完成总结</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div style="height:80px"></div>
+        <div class="screen-content" style="padding-top:0">
+          <div class="completion-icon">🎉</div>
+          <div class="completion-title">检查完成！</div>
+          <div class="completion-desc">所有必选项已确认，可以出发拍摄了</div>
+
+          <div class="stat-row">
+            <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">必选已完成</div></div>
+            <div class="stat-item"><div class="stat-num">7</div><div class="stat-label">总检查项</div></div>
+          </div>
+
+          <div style="padding:14px;border-radius:12px;background:rgba(22,119,255,0.06);margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:#1677ff;margin-bottom:4px">💡 拍摄提醒</div>
+            <div style="font-size:12px;color:#666;line-height:1.5">记得携带备用电池和充电宝，户外拍摄耗电较快</div>
+          </div>
+
+          <button class="cta-btn">开始拍摄</button>
+          <button class="onboard-skip" style="display:block;width:100%;margin-top:8px">查看进阶技巧 ›</button>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 4: Tips — Screen 1
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 4 · Screen 1 — 技巧列表</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="nav-bar">进阶技巧</div>
+        <div class="screen-content">
+          <div class="filter-bar">
+            <button class="filter-chip active">全部</button>
+            <button class="filter-chip">入门</button>
+            <button class="filter-chip">进阶</button>
+            <button class="filter-chip">高级</button>
+          </div>
+
+          <div class="tip-card">
+            <div class="tip-title">ND 滤镜使用</div>
+            <div class="tip-desc">ND 滤镜减少进光量，让你在强光下也能使用慢快门，拍出运动模糊效果</div>
+            <div class="tip-tags">
+              <span class="tip-tag tag-intermediate">进阶</span>
+              <span class="tip-tag" style="background:#f5f5f5;color:#999">风光</span>
+            </div>
+          </div>
+
+          <div class="tip-card">
+            <div class="tip-title">延时摄影</div>
+            <div class="tip-desc">将数小时的变化压缩为几秒的视频——适合日出日落、城市车流</div>
+            <div class="tip-tags">
+              <span class="tip-tag tag-intermediate">进阶</span>
+              <span class="tip-tag" style="background:#f5f5f5;color:#999">风光</span>
+            </div>
+          </div>
+
+          <div class="tip-card">
+            <div class="tip-title">自拍 Vlog</div>
+            <div class="tip-desc">翻转屏幕 + 云台增稳，轻松拍摄稳定的自拍 Vlog</div>
+            <div class="tip-tags">
+              <span class="tip-tag tag-beginner">入门</span>
+              <span class="tip-tag" style="background:#f5f5f5;color:#999">人像 · 室内</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab-item"><div class="tab-icon">🏠</div>首页</div>
+          <div class="tab-item"><div class="tab-icon">✅</div>清单</div>
+          <div class="tab-item active"><div class="tab-icon">🧭</div>进阶</div>
+          <div class="tab-item"><div class="tab-icon">⚙️</div>设置</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 4: Tips — Screen 2 (Detail)
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 4 · Screen 2 — 技巧详情</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="nav-bar"><span class="back">‹ 返回</span>ND 滤镜使用</div>
+        <div class="screen-content">
+          <div class="tip-detail-header">
+            <div class="tip-detail-title">ND 滤镜使用</div>
+            <div class="tip-detail-difficulty">进阶难度 · 适用于风光场景</div>
+          </div>
+
+          <div class="tip-detail-desc">
+            ND（中性密度）滤镜减少进光量，让你在强光下也能使用慢快门，拍出运动模糊效果（如流水如丝、人群拖影）。
+          </div>
+
+          <div class="section-title">操作步骤</div>
+
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content"><div class="step-title">安装 ND 滤镜</div><div class="step-desc">将 ND 滤镜磁吸安装到 Pocket 3 镜头前方</div></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content"><div class="step-title">选择合适档位</div><div class="step-desc">晴天户外选 ND16 或 ND32；多云选 ND8</div></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content"><div class="step-title">切换到手动快门</div><div class="step-desc">快门速度设为帧率倒数 2 倍（30fps → 1/60s）</div></div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-content"><div class="step-title">录制并观察效果</div><div class="step-desc">运动物体呈现自然的模糊拖影效果</div></div>
+          </div>
+
+          <div class="warning-box">
+             室内通常不需要 ND 滤镜，仅在强光户外使用
+          </div>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Flow 4: Tips — Screen 3 (Completion)
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>Flow 4 · Screen 3 — 学习完成</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div style="height:60px"></div>
+        <div class="screen-content" style="padding-top:0">
+          <div class="completion-icon" style="background:rgba(22,119,255,0.06)"></div>
+          <div class="completion-title">技巧学习完成！</div>
+          <div class="completion-desc">你已浏览了所有进阶技巧，<br>现在可以实战练习了</div>
+
+          <div class="stat-row">
+            <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">已学技巧</div></div>
+            <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">难度等级</div></div>
+          </div>
+
+          <div style="padding:14px;border-radius:12px;background:rgba(77,171,154,0.08);margin-bottom:12px">
+            <div style="font-size:13px;font-weight:600;color:#4dab9a;margin-bottom:4px">🌱 入门技巧（2 个）</div>
+            <div style="font-size:12px;color:#666">全景拍摄 · 慢动作 · 自拍 Vlog</div>
+          </div>
+          <div style="padding:14px;border-radius:12px;background:rgba(255,184,0,0.08);margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:#ad6800;margin-bottom:4px">⚡ 进阶技巧（2 个）</div>
+            <div style="font-size:12px;color:#666">ND 滤镜使用 · 延时摄影</div>
+          </div>
+
+          <button class="cta-btn">返回首页</button>
+        </div>
+        <div class="safe-bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       Home (TabBar)
+       ═══════════════════════════════════════ -->
+  <div class="phone-frame">
+    <div class="phone-label"><span>首页 · TabBar</span></div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="safe-top"></div>
+        <div class="screen-content">
+          <div class="home-title">Pocket 3 新手教程</div>
+          <div class="home-desc">选择拍摄场景，学习对应参数和技巧</div>
+
+          <div class="scene-card">
+            <div class="scene-thumb">🧑</div>
+            <div class="scene-info"><div class="scene-name">户外人像</div><div class="scene-desc">阳光下的人像拍摄，注意曝光与肤色还原</div></div>
+            <div class="scene-arrow">›</div>
+          </div>
+          <div class="scene-card">
+            <div class="scene-thumb">️</div>
+            <div class="scene-info"><div class="scene-name">风光</div><div class="scene-desc">壮阔风景拍摄，注重清晰度与色彩还原</div></div>
+            <div class="scene-arrow">›</div>
+          </div>
+          <div class="scene-card">
+            <div class="scene-thumb">🏠</div>
+            <div class="scene-info"><div class="scene-name">室内生活</div><div class="scene-desc">室内日常记录，应对弱光环境</div></div>
+            <div class="scene-arrow">›</div>
+          </div>
+
+          <div class="quick-btns">
+            <div class="quick-btn">📋 拍前检查</div>
+            <div class="quick-btn">💡 进阶技巧</div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab-item active"><div class="tab-icon">🏠</div>首页</div>
+          <div class="tab-item"><div class="tab-icon">✅</div>清单</div>
+          <div class="tab-item"><div class="tab-icon">🧭</div>进阶</div>
+          <div class="tab-item"><div class="tab-icon">️</div>设置</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

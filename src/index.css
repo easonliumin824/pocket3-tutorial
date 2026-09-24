@@ -1,0 +1,41 @@
+/* Pocket 3 新手拍摄教程 — Global Reset for antd-mobile */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--adm-color-background, #f5f5f5);
+  color: var(--adm-color-text, #333);
+}
+
+/* Prevent overscroll bounce on iOS */
+html {
+  overflow: hidden;
+}
+
+/* Semantic background / border tokens (replace hardcoded hex in flow files) */
+:root {
+  --color-primary-bg: rgba(22, 119, 255, 0.06);
+  --color-success-bg: rgba(77, 171, 154, 0.08);
+  --color-success-border: rgba(77, 171, 154, 0.40);
+  --color-warning-bg: rgba(255, 184, 0, 0.08);
+  --color-warning-text: #ad6800;
+  --color-danger-bg: rgba(255, 77, 79, 0.06);
+  --color-info-border: rgba(22, 119, 255, 0.30);
+}
+
+#root {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
