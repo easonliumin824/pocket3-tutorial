@@ -11,7 +11,7 @@
 //   /settings             — 设置（TabBar 内）
 // =============================================
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 
 // App Shell（含 TabBar）
@@ -54,7 +54,7 @@ import {
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         {/* ── Flow 1: Onboarding（无 TabBar，全屏沉浸） ── */}
         <Route path="/onboarding" element={<Screen1_Welcome />} />
@@ -91,7 +91,7 @@ function App() {
         {/* 兜底：重定向到首页 */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
