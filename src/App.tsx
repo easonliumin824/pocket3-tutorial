@@ -63,11 +63,11 @@ function App() {
         <Route path="/onboarding/scene" element={<Screen4_SelectScene />} />
 
         {/* ── Flow 2: 场景拍摄指导（无 TabBar，全屏沉浸） ── */}
-        <Route path="/scene/:id" element={<Screen1_ParamsOverview />} />
-        <Route path="/scene/:id/steps" element={<Screen2_StepGuide />} />
-        <Route path="/scene/:id/compare" element={<Screen3_ExampleComparison />} />
-        <Route path="/scene/:id/tips" element={<Screen4_SceneTips />} />
-        <Route path="/scene/:id/reference" element={<Screen5_ReferenceCard />} />
+        <Route path="/scene/:sceneId" element={<Screen1_ParamsOverview />} />
+        <Route path="/scene/:sceneId/steps" element={<Screen2_StepGuide />} />
+        <Route path="/scene/:sceneId/compare" element={<Screen3_ExampleComparison />} />
+        <Route path="/scene/:sceneId/tips" element={<Screen4_SceneTips />} />
+        <Route path="/scene/:sceneId/reference" element={<Screen5_ReferenceCard />} />
 
         {/* ── TabBar 包裹的 Tab 页面 ── */}
         <Route element={<AppShell />}>

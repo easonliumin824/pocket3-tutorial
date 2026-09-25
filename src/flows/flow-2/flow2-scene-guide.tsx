@@ -190,7 +190,7 @@ export function Screen1_ParamsOverview() {
           block
           color="primary"
           size="large"
-          onClick={() => navigate(`/scene/${scene.id}/guide`)}
+          onClick={() => navigate(`/scene/${scene.id}/steps`)}
         >
           开始拍摄指导 →
         </Button>
@@ -362,7 +362,7 @@ export function Screen2_StepGuide() {
               setCurrentStep(currentStep + 1)
             } else {
               Toast.show({ content: '指导完成！', icon: 'success' })
-              navigate(`/scene/${scene.id}/examples`)
+              navigate(`/scene/${scene.id}/compare`)
             }
           }}
         >
